@@ -15,8 +15,6 @@ your choice :)
 The project is build with [Django Cookiecutter](https://github.com/pydanny/cookiecutter-django/) and it comes with
 docker support, it is design to work out of the box with Docker.
 
-The current version of this project based on a fork of [openstreetmap-carto](https://github.com/linuxluigi/openstreetmap-carto/).
-
 # Features
 
 - work out of the box, no special configuration is need
@@ -33,7 +31,7 @@ The current version of this project based on a fork of [openstreetmap-carto](htt
 
 ## Tile Server
 
-- a custom fork of [openstreetmap-carto](https://github.com/linuxluigi/openstreetmap-carto/) for tile styles and SQL
+- auto convert [openstreetmap-carto](https://github.com/gravitystorm/openstreetmap-carto/) for tile styles and SQL
 - [https://mapnik.org/](https://mapnik.org/)
 - [python-mapnik](https://github.com/mapnik/python-mapnik)
 - tile rendering code by [wiki.openstreetmap.org](https://wiki.openstreetmap.org/wiki/Howto_real_time_tiles_rendering_with_mapnik_and_mod_python)
@@ -47,7 +45,7 @@ The current version of this project based on a fork of [openstreetmap-carto](htt
 
 # Roadmap
 
-- integrate complete test of tile producer, website & [openstreetmap-carto](https://github.com/linuxluigi/openstreetmap-carto/)
+- integrate complete test of tile producer, website & [openstreetmap-carto](https://github.com/gravitystorm/openstreetmap-carto/)
 - a headless server, separate front-end from the back-end maybe with [Ionic](https://ionicframework.com/) and [OpenLayers](https://openlayers.org/)
 - add auto test on each commit with [Travis](https://travis-ci.com/) or [Github Actions](https://github.com/features/actions)
 - auto update dependencies with [pyup.io](https://pyup.io/)
@@ -157,7 +155,7 @@ $ sudo pip install docker-compose
 ```bash
 $ mkdir ohdm
 $ git clone https://github.com/OpenHistoricalDataMap/MapnikTileServer.git
-$ git clone https://github.com/linuxluigi/openstreetmap-carto.git
+$ git clone https://github.com/gravitystorm/openstreetmap-carto.git
 ```
 
 **2. build images**
@@ -169,16 +167,23 @@ $ cd MapnikTileServer
 $ docker-compose -f local.yml build
 ```
 
-**3. create test database (optional)**
+**3. init database**
+
+```bash
+$ docker-compose -f local.yml run --rm django python manage.py migrate
+```
+
+**4. create test database (optional)**
 
 ```bash
 $ docker-compose -f local.yml up test-database
 ```
 
-**4. download shapefiles & generate style.xml**
+**5. download shapefiles & generate style.xml**
 
 ```bash
-$ docker-compose -f local.yml run --rm django get-shapefiles.sh
+$ docker-compose -f local.yml run --rm django /get-shapefiles.sh
+$ docker-compose -f local.yml run --rm django python manage.py date_template_importer
 $ docker-compose -f local.yml run --rm django python manage.py create_style_xml
 ```
 
@@ -217,6 +222,12 @@ $ docker-compose -f local.yml run --rm django python manage.py createsuperuser
 To visit the admin panel go to http://example.com:8000/admin/
 
 For more infos got to https://cookiecutter-django.readthedocs.io/en/latest/developing-locally-docker.html
+
+**7. stop server**
+
+```bash
+$ docker-compose -f local.yml stop
+```
 
 ## Setup Production Server
 
@@ -360,7 +371,13 @@ The admin panel url depends on the environment var ``DJANGO_ADMIN_URL`` in ``.en
 **7. Backup**
 
 Go to [cookiecutter-django.readthedocs.io](https://cookiecutter-django.readthedocs.io/en/latest/docker-postgres-backups.html)
-to read how to back up the database. 
+to read how to back up the database.
+
+**8. stop server**
+
+```bash
+$ docker-compose -f production.yml stop
+```
 
 ## Scale-Up for production
 

@@ -52,8 +52,11 @@ RUN npm install -g carto@0
 RUN npm install -g millstone
 
 # https://github.com/gravitystorm/openstreetmap-carto
-RUN git clone https://github.com/linuxluigi/openstreetmap-carto.git /opt/openstreetmap-carto  && \
+ARG OSM_CARTO_VERSION
+RUN git clone https://github.com/gravitystorm/openstreetmap-carto.git /opt/openstreetmap-carto-debug  && \
     cd /opt/openstreetmap-carto && \
+    git fetch --all && \
+    git checkout $OSM_CARTO_VERSION && \
     ./scripts/get-shapefiles.py && \
     carto project.mml > style.xml
 

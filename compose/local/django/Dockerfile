@@ -51,7 +51,7 @@ RUN npm install -g carto@0
 # install millstone
 RUN npm install -g millstone
 
-# dir for https://github.com/linuxluigi/openstreetmap-carto
+# dir for auto convert openstreetmap-carto
 RUN mkdir /opt/openstreetmap-carto
 
 # https://github.com/gravitystorm/openstreetmap-carto
